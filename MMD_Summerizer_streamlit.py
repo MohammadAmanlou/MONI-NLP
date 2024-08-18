@@ -10,8 +10,14 @@ def query(payload):
     response = requests.post(API_URL, headers=headers, json=payload)
     return response.json()
 
-def summarize_text(text):
-    payload = {"inputs": text}
+def summarize_text(text, min_length, max_length):
+    payload = {
+        "inputs": text,
+        "parameters": {
+            "min_length": min_length,
+            "max_length": max_length
+        }
+    }
     output = query(payload)
 
     # Check if the API response is valid
@@ -27,21 +33,25 @@ try:
 except Exception as e:
     summarizer = None
 
-def summarize(text):
+def summarize(text, min_length, max_length):
     if summarizer is not None:
-        summary = summarizer(text, max_length=50, min_length=25, do_sample=False)
+        summary = summarizer(text, max_length=max_length, min_length=min_length, do_sample=False)
         return summary[0]['summary_text']
     else:
-        return summarize_text(text)
+        return summarize_text(text, min_length, max_length)
 
 # Streamlit app
-st.title("Text Summarizer with Hugging Face API")
+st.title("MMD Summarizer")
 
 text = st.text_area("Enter text to summarize")
 
+# Input fields for min and max length
+min_length = st.number_input("Minimum summary length (words):", min_value=5, max_value=100, value=25)
+max_length = st.number_input("Maximum summary length (words):", min_value=5, max_value=200, value=50)
+
 if st.button("Summarize with Streamlit"):
     if text:
-        summary = summarize(text)
+        summary = summarize(text, min_length=min_length, max_length=max_length)
         st.write("Summary:")
         st.write(summary)
         
