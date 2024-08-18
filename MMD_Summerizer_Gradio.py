@@ -35,5 +35,5 @@ def summarize(text):
         return summarize_text(text)
 
 # Gradio interface
-iface = gr.Interface(fn=summarize, inputs="textbox", outputs="textbox", title="Text Summarizer - Gradio")
+iface = gr.Interface(fn=summarize, inputs="textbox", outputs="textbox", title="MMD Text Summarizer")
 iface.launch(share=True)
