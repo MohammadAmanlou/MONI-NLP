@@ -1,0 +1,1 @@
+>>fra<< this is a sentence in english that we want to translate to french
