@@ -1,7 +1,3 @@
-برای به‌روزرسانی README با تغییرات جدید پروژه، این موارد را می‌توانیم به‌صورت زیر اضافه کنیم. این شامل تغییر نام پروژه به **MONI_NLP**، افزودن قابلیت‌های جدید ترجمه، ترکیب خلاصه‌سازی و ترجمه، و به‌روزرسانی بخش‌های مرتبط با توضیحات و نحوه استفاده از فایل‌های جدید است:
-
----
-
 # MONI_NLP
 
 ## Overview
@@ -107,7 +103,3 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## Contact
 
 For any queries or issues, please raise an issue in the repository or contact the maintainer at [MohammadAmanlou2@gmail.com].
-
----
-
-این به‌روزرسانی‌ها به README پروژه شما اضافه شده‌اند و قابلیت‌ها و تغییرات جدید به‌خوبی نشان داده شده‌اند. اگر نیاز به تغییرات دیگری دارید، اطلاع دهید!
