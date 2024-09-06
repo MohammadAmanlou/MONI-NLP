@@ -219,7 +219,7 @@ if st.session_state.stage == 'summarization_before_translation':
 # Stage: Translation after Summarization
 if st.session_state.stage == 'translation_after_summarization':
     st.subheader("Translation Settings")
-    output_language = st.text_input("Enter the target language code (e.g., 'fa' for Persian):", value="fa", key='tas_output_language')
+    output_language = st.text_input("Enter the target language code (e.g., 'pes' for Persian, 'fra' for French, 'eng' for English, 'spa' for Spanish, 'deu' for German, 'rus' for Russian):", value="fa", key='tas_output_language')
     model_option = st.selectbox("Select the translation model:",
                                 ["SeamlessM4T", "Opus-MT", "MADLAD400"], key='tas_model_option')
     model_index = ["SeamlessM4T", "Opus-MT", "MADLAD400"].index(model_option)
