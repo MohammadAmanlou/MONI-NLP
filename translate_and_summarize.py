@@ -79,7 +79,7 @@ def evaluate_summary(reference, summary):
 
     return metrics
 
-def translate_text(input_text, output_language="fra", model_index=0):
+def translate_text(input_text, output_language="pes", model_index=0):
     try:
         input_language, _ = langid.classify(input_text)
 
@@ -219,7 +219,7 @@ if st.session_state.stage == 'summarization_before_translation':
 # Stage: Translation after Summarization
 if st.session_state.stage == 'translation_after_summarization':
     st.subheader("Translation Settings")
-    output_language = st.text_input("Enter the target language code (e.g., 'pes' for Persian, 'fra' for French, 'eng' for English, 'spa' for Spanish, 'deu' for German, 'rus' for Russian):", value="fa", key='tas_output_language')
+    output_language = st.text_input("Enter the target language code (e.g., 'pes' for Persian, 'fra' for French, 'eng' for English, 'spa' for Spanish, 'deu' for German, 'rus' for Russian):", value="pes", key='tas_output_language')
     model_option = st.selectbox("Select the translation model:",
                                 ["SeamlessM4T", "Opus-MT", "MADLAD400"], key='tas_model_option')
     model_index = ["SeamlessM4T", "Opus-MT", "MADLAD400"].index(model_option)
@@ -234,7 +234,7 @@ if st.session_state.stage == 'translation_after_summarization':
 # Stage: Translation before Summarization
 if st.session_state.stage == 'translation_before_summarization':
     st.subheader("Translation Settings")
-    output_language = st.text_input("Enter the target language code (e.g., 'fa' for Persian):", value="fa", key='tbs_output_language')
+    output_language = st.text_input("Enter the target language code (e.g., 'pes' for Persian, 'fra' for French, 'eng' for English, 'spa' for Spanish, 'deu' for German, 'rus' for Russian):", value="pes", key='tbs_output_language')
     model_option = st.selectbox("Select the translation model:",
                                 ["SeamlessM4T", "Opus-MT", "MADLAD400"], key='tbs_model_option')
     model_index = ["SeamlessM4T", "Opus-MT", "MADLAD400"].index(model_option)
@@ -268,4 +268,4 @@ if st.session_state.stage == 'summarization_after_translation':
 # Final stage: Done
 if st.session_state.stage == 'done':
     if st.button("Start Over"):
-        st.session_state.clear()
+        st.session_state.clear()                       
