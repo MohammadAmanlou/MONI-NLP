@@ -3,25 +3,29 @@ import langid
 import torch
 import nltk
 from transformers import (SeamlessM4TModel, AutoProcessor, MarianMTModel, MarianTokenizer, T5ForConditionalGeneration, T5Tokenizer, pipeline)
-from rouge import Rouge
-from nltk.translate.bleu_score import sentence_bleu
-from bert_score import score as bert_score
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, ConversationHandler, filters
+from huggingface_hub import login
 
+# Log in to Hugging Face with your token
+login(token="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")
 nltk.download('punkt')
 
 # Model settings
-persian_model = "HooshvareLab/bert-fa-base-uncased"
+persian_model = "HooshvareLab/bert-fa-base-uncased"  # Update to a more powerful model
 english_model = "facebook/bart-large-cnn"
+spanish_model = "facebook/bart-large-cnn"  # Example model for Spanish
+french_model = "facebook/bart-large-cnn"   # Example model for French
 
 summarizers = {
     'fa': pipeline("summarization", model=persian_model, tokenizer=persian_model),
-    'en': pipeline("summarization", model=english_model, tokenizer=english_model)
+    'en': pipeline("summarization", model=english_model, tokenizer=english_model),
+    'es': pipeline("summarization", model=spanish_model, tokenizer=spanish_model),
+    'fr': pipeline("summarization", model=french_model, tokenizer=french_model)
 }
 
 # Conversation states
-CHOOSE_OPERATION, GET_TEXT, SUMMARIZE_ONLY, TRANSLATE_ONLY, TRANSLATION_AFTER_SUMMARY, SUMMARIZATION_AFTER_TRANSLATION = range(6)
+CHOOSE_OPERATION, GET_TEXT, GET_MIN_LENGTH, GET_MAX_LENGTH = range(4)
 
 # Emojis
 SUMMARIZE_EMOJI = "📝"
@@ -32,10 +36,10 @@ ERROR_EMOJI = "❗"
 
 # Helper functions
 def get_summarizer(language):
-    if language == 'fa':
-        return summarizers['fa']
+    if language in summarizers:
+        return summarizers[language]
     else:
-        return summarizers['en']
+        return summarizers['en']  # Default to English if language not supported
 
 def summarize(text, min_length, max_length):
     max_input_length = 512  # Set to the model's maximum input length
@@ -47,9 +51,6 @@ def summarize(text, min_length, max_length):
     try:
         language, _ = langid.classify(cleaned_text)
         summarizer = get_summarizer(language)
-
-        if max_length > 150:
-            max_length = 150
 
         summary = summarizer(cleaned_text, max_length=max_length, min_length=min_length, do_sample=False)
         return summary[0]['summary_text']
@@ -125,10 +126,16 @@ async def choose_operation(update: Update, context) -> int:
     user_choice = update.message.text
     context.user_data['operation'] = user_choice
 
-    if user_choice in ["Summarization only", "Summarization before Translation", "Translation before Summarization"]:
-        await update.message.reply_text(f"{SUMMARIZE_EMOJI} Please enter the text for summarization:")
+    if user_choice == "Summarization only":
+        await update.message.reply_text(f"{SUMMARIZE_EMOJI} Please enter the text you want to summarize:")
         return GET_TEXT
     elif user_choice == "Translation only":
+        await update.message.reply_text(f"{TRANSLATE_EMOJI} Please enter the text for translation:")
+        return GET_TEXT
+    elif user_choice == "Summarization before Translation":
+        await update.message.reply_text(f"{SUMMARIZE_EMOJI} Please enter the text you want to summarize:")
+        return GET_TEXT
+    elif user_choice == "Translation before Summarization":
         await update.message.reply_text(f"{TRANSLATE_EMOJI} Please enter the text for translation:")
         return GET_TEXT
     else:
@@ -140,39 +147,50 @@ async def get_text(update: Update, context) -> int:
     context.user_data['text'] = user_text
 
     if context.user_data['operation'] == "Summarization only":
-        await update.message.reply_text(f"{CONFIRM_EMOJI} Processing summarization...")
-        summary = summarize(user_text, min_length=50, max_length=150)
-        await update.message.reply_text(f"Summary: {summary}")
-        return ConversationHandler.END
-
+        await update.message.reply_text(f"{CONFIRM_EMOJI} Text received! Please enter the minimum length for the summary:")
+        return GET_MIN_LENGTH
     elif context.user_data['operation'] == "Translation only":
         await update.message.reply_text(f"{CONFIRM_EMOJI} Processing translation...")
         translation = translate_text(user_text, output_language="pes", model_index=0)
         await update.message.reply_text(f"Translated Text: {translation}")
         return ConversationHandler.END
-
     elif context.user_data['operation'] == "Summarization before Translation":
-        await update.message.reply_text(f"{CONFIRM_EMOJI} Processing summarization first...")
-        summary = summarize(user_text, min_length=50, max_length=150)
-        context.user_data['summary'] = summary
-        await update.message.reply_text(f"Summary done! Now translating...\nSummary: {summary}")
-        translation = translate_text(summary, output_language="pes", model_index=0)
-        await update.message.reply_text(f"Translated Summary: {translation}")
+        await update.message.reply_text(f"{CONFIRM_EMOJI} Text received! Please enter the minimum length for the summary:")
+        return GET_MIN_LENGTH
+    elif context.user_data['operation'] == "Translation before Summarization":
+        await update.message.reply_text(f"{CONFIRM_EMOJI} Processing translation...")
+        translation = translate_text(user_text, output_language="pes", model_index=0)
+        await update.message.reply_text(f"Translated Text: {translation}")
         return ConversationHandler.END
 
-    elif context.user_data['operation'] == "Translation before Summarization":
-        await update.message.reply_text(f"{CONFIRM_EMOJI} Processing translation first...")
-        translation = translate_text(user_text, output_language="pes", model_index=0)
-        context.user_data['translation'] = translation
-        await update.message.reply_text(f"Translation done! Now summarizing...\nTranslated Text: {translation}")
-        summary = summarize(translation, min_length=50, max_length=150)
-        await update.message.reply_text(f"Summarized Translation: {summary}")
+async def get_min_length(update: Update, context) -> int:
+    try:
+        min_length = int(update.message.text)
+        context.user_data['min_length'] = min_length
+        await update.message.reply_text("Please enter the maximum length for the summary:")
+        return GET_MAX_LENGTH
+    except ValueError:
+        await update.message.reply_text("Please enter a valid integer.")
+        return GET_MIN_LENGTH
+
+async def get_max_length(update: Update, context) -> int:
+    try:
+        max_length = int(update.message.text)
+        context.user_data['max_length'] = max_length
+        user_text = context.user_data['text']
+
+        await update.message.reply_text(f"{CONFIRM_EMOJI} Processing summarization...")
+        summary = summarize(user_text, min_length=context.user_data['min_length'], max_length=max_length)
+        await update.message.reply_text(f"Summary: {summary}")
         return ConversationHandler.END
+    except ValueError:
+        await update.message.reply_text("Please enter a valid integer.")
+        return GET_MAX_LENGTH
 
 # Main function to run the bot
 def main():
     # Add your bot token here
-    TOKEN = "6832279323:AAESNQQOlazT9fUx8JIKlz592RcA17fMcqo"
+    TOKEN = "6832279323:AAESNQQOlazT9fUx8JIKlz592RcA17fMcqo"  # Replace with your actual token
 
     # Create the Application and pass it your bot's token
     application = Application.builder().token(TOKEN).build()
@@ -182,7 +200,9 @@ def main():
         entry_points=[CommandHandler('start', start)],
         states={
             CHOOSE_OPERATION: [MessageHandler(filters.TEXT & ~filters.COMMAND, choose_operation)],
-            GET_TEXT: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_text)]
+            GET_TEXT: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_text)],
+            GET_MIN_LENGTH: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_min_length)],
+            GET_MAX_LENGTH: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_max_length)]
         },
         fallbacks=[]
     )
