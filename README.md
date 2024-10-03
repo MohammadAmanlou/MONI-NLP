@@ -1,105 +1,120 @@
 # MONI_NLP
 
-## Overview
-
-`MONI_NLP` is a repository that provides tools for text summarization and translation using state-of-the-art natural language processing models. It offers multiple interfaces for summarization, translation, and evaluation, including a unified Streamlit application for flexible workflows.
+**MONI_NLP** is a comprehensive repository designed to simplify and enhance the processes of text summarization and translation using state-of-the-art Natural Language Processing (NLP) models. This project integrates various models and user interfaces, such as Gradio and Streamlit, to provide a flexible, intuitive platform for handling text-related tasks. Additionally, it includes a Telegram bot to facilitate on-the-go summarization and translation.
 
 ## Features
 
-- **Text Summarization using Transformers**: Utilizes models like `facebook/bart-large-cnn` from Hugging Face for generating concise and coherent summaries.
-- **Translation using MarianMT and other models**: Supports translation between multiple languages using models like `Helsinki-NLP/opus-mt-en-roa`.
-- **Gradio Interface**: A simple UI for quick text summarization tasks.
-- **Streamlit Interface**: A more detailed interface that allows for customization of tasks like summary length, translation models, and evaluation metrics.
-- **Unified Streamlit App**: A combined application for both summarization and translation with customizable workflows.
-- **Evaluation Metrics**: Tools to evaluate summaries using metrics like ROUGE, BLEU, and BERTScore.
+### 1. **Text Summarization using Transformers**
+- **Model:** The repository uses the `facebook/bart-large-cnn` model from Hugging Face to generate concise, coherent summaries of input text.
+- **Interfaces:** 
+  - **Gradio Interface**: Provides a straightforward user interface for quick summarization tasks.
+  - **Streamlit Interface**: A more detailed application that allows for customization of summaries, including options like summary length, model selection, and evaluation metrics.
+
+### 2. **Translation using MarianMT**
+- **Models:** Translation tasks are handled by MarianMT (`Helsinki-NLP/opus-mt-en-roa`), with support for other models.
+- **Multilingual Support:** Translate text between multiple languages using models fine-tuned on various language pairs.
+- **Interfaces:**
+  - **Streamlit Application**: An advanced translation interface with flexible options for task management and language pair selection.
+
+### 3. **Unified Summarization and Translation App**
+- A combined Streamlit application integrates both summarization and translation workflows, with full customization options.
+- **Support for Models:** Choose between summarization and translation or a combination of both using models like SeamlessM4T, Opus-MT, and MADLAD400.
+- **Customizable Settings:** Adjust parameters like minimum/maximum summary length, target language for translation, and more.
+
+### 4. **Evaluation Metrics**
+- **Summarization:** Evaluate the quality of generated summaries using well-known metrics such as:
+  - **ROUGE**
+  - **BLEU**
+  - **BERTScore**
+  
+### 5. **Telegram Bot Integration**
+- **Bot Name:** [MONI_NLP_bot](https://t.me/MONI_NLP_bot)
+- This Telegram bot provides quick access to the repository’s summarization and translation capabilities, making it easy to handle text tasks on mobile devices.
 
 ## File Descriptions
 
-### 1. `app_gradio.py`
+1. **`MMD_Summarizer_Gradio.py`**  
+   - Gradio interface for text summarization using the Hugging Face model.
 
-Provides a Gradio interface for text summarization using Hugging Face’s summarization pipeline.
+2. **`MMD_Summarizer_Streamlit.py`**  
+   - Streamlit interface for advanced text summarization with evaluation options.
 
-### 2. `app_streamlit.py`
+3. **`translate_and_summarize_Streamlit.py`**  
+   - A combined Streamlit application that integrates summarization and translation workflows.
 
-Offers an advanced interface with Streamlit for summarization with evaluation options using multiple metrics.
+4. **`Analysis_MarianMT_Translator_model.ipynb`**  
+   - A Jupyter notebook analyzing the performance of MarianMT for multilingual translations.
 
-### 3. `Translate.py`
+5. **`Summarizing_Metrics.ipynb`**  
+   - A notebook to evaluate summarization results using different metrics like ROUGE, BLEU, and BERTScore.
 
-A new Streamlit-based translation interface using the MarianMT model for translating text between various languages.
+6. **`Translation_example_with_MarianMT.ipynb`**  
+   - Example notebook demonstrating the use of MarianMT for translation with test cases.
 
-**Usage:**
-```bash
-streamlit run app_streamlit.py
-```
+7. **`translation_function_for_use_in_big_project.ipynb`**  
+   - Explains how to integrate the translation function into larger projects, offering practical usage guidance.
 
-### 4. `Translation_example_with_MarianMT.ipynb`
+8. **`translate_and_summarize_TelegramBot.py`**  
+   - Code for the Telegram bot which performs both summarization and translation tasks via the bot interface.
 
-Demonstrates the use of MarianMT for translation with examples.
+9. **`README.md`**  
+   - This file contains a detailed guide for repository usage.
 
-### 5. `Analysis_MarianMT_Translator_model.ipynb`
+## Usage
 
-A notebook that analyzes the MarianMT translation model and its performance.
+### **Summarization:**
+1. Gradio:  
+   ```bash
+   python MMD_Summarizer_Gradio.py
+   ```
+2. Streamlit:  
+   ```bash
+   streamlit run MMD_Summarizer_Streamlit.py
+   ```
 
-### 6. `translation_function_for_use_in_big_project.ipynb`
+### **Translation:**
+1. Streamlit:  
+   ```bash
+   streamlit run translate_and_summarize_Streamlit.py
+   ```
 
-Explains how to integrate the translation function into larger projects.
-
-### 7. `combined_summarize_translate.py`
-
-This is a comprehensive Streamlit application that integrates both summarization and translation capabilities, with options for different models and evaluation metrics.
-
-**Key Features:**
-- Choose between summarization, translation, or a combination of both.
-- Support for multiple translation models including SeamlessM4T, Opus-MT, and MADLAD400.
-- Customizable summarization settings including minimum and maximum lengths.
-- Evaluation of generated summaries using ROUGE, BLEU, and BERTScore metrics.
-
-**Usage:**
-```bash
-streamlit run combined_summarize_translate.py
-```
+### **Telegram Bot:**
+To use the Telegram bot for summarization or translation, search for **[MONI_NLP_bot](https://t.me/MONI_NLP_bot)** on Telegram and follow the instructions.
 
 ## Installation
 
 1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/MONI_NLP.git
-    ```
+   ```bash
+   git clone https://github.com/yourusername/MONI_NLP.git
+   ```
 2. Navigate to the repository:
-    ```bash
-    cd MONI_NLP
-    ```
+   ```bash
+   cd MONI_NLP
+   ```
 3. Install the required Python packages:
-    ```bash
-    pip install -r requirements.txt
-    ```
-4. Run the applications:
-    - For Gradio: `python app_gradio.py`
-    - For Streamlit Summarizer: `streamlit run app_streamlit.py`
-    - For Streamlit Combined App: `streamlit run combined_summarize_translate.py`
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Dependencies
-
 - `gradio`
 - `streamlit`
 - `transformers`
+- `torch`
 - `requests`
 - `rouge`
 - `nltk`
 - `bert_score`
 - `langid`
-- `torch`
 
-Ensure you have these dependencies installed before running the scripts.
-
-## Collaborators
-
-- **Niloofar Hoseinzadeh**: Contributed to the integration of translation and summarization functions.
+Ensure these dependencies are installed before running the scripts.
 
 ## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+## Contributors
+- **Niloofar Hoseinzadeh:** Contributed to the integration of translation and summarization functions.
+- **Mohammad Amanlou:** Maintainer and lead developer.
 
 ## Contact
-
-For any queries or issues, please raise an issue in the repository or contact the maintainer at [MohammadAmanlou2@gmail.com].
+For questions or issues, please raise an issue in this repository or reach out at **[MohammadAmanlou2@gmail.com](mailto:MohammadAmanlou2@gmail.com)**.
