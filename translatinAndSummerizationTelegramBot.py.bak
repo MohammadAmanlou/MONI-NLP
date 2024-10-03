@@ -10,11 +10,11 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()  
-API_KEY = os.getenv('API_KEY')
-TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
+api_key = os.getenv('API_KEY')
+secret_key = os.getenv('TELEGRAM_TOKEN')
 
 # Log in to Hugging Face with your token
-login(token=API_KEY, add_to_git_credential=True)
+login(token=, add_to_git_credential=True)
 
 nltk.download('punkt')
 
@@ -236,7 +236,7 @@ async def get_max_length(update: Update, context) -> int:
 # Main function to run the bot
 def main():
     # Add your bot token here
-    TOKEN = TELEGRAM_TOKEN
+    TOKEN = "6832279323:AAESNQQOlazT9fUx8JIKlz592RcA17fMcqo"
 
     # Create the Application and pass it your bot's token
     application = Application.builder().token(TOKEN).build()
